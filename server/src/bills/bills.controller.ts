@@ -7,6 +7,8 @@ import {
   Patch,
   Post,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Bill, BillType } from './bill.model';
 import { BillsService } from './bills.service';
@@ -32,6 +34,7 @@ export class BillsController {
   }
 
   @Post()
+  @UsePipes(ValidationPipe)
   async createBills(@Body() createBillDto: CreateBillDto): Promise<Bill> {
     return this.billsService.createBill(createBillDto);
   }
