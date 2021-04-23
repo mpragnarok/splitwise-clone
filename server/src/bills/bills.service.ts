@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Bill, BillType } from './bill.model';
 import { v1 as uuid } from 'uuid';
 import { CreateBillDto } from './dto/create-bill.dto';
@@ -13,7 +13,7 @@ export class BillsService {
   getAllBills(): Bill[] {
     return this.bills;
   }
-  async getBillsWithFilters(filterDto: GetBillsFilterDto): Promise<Bill[]> {
+  getBillsWithFilters(filterDto: GetBillsFilterDto): Bill[] {
     const { type, search } = filterDto;
     let bills: Bill[] = this.getAllBills();
     if (type) {
@@ -29,11 +29,16 @@ export class BillsService {
     return bills;
   }
 
-  async getBillById(id: string): Promise<Bill> {
-    return this.bills.find((bill) => bill.id === id);
+  getBillById(id: string): Bill {
+    const found = this.bills.find((bill) => bill.id === id);
+
+    if (!found) {
+      throw new NotFoundException(`Bill with ID ${id} not found`);
+    }
+    return found;
   }
 
-  async createBill(createBillDto: CreateBillDto): Promise<Bill> {
+  createBill(createBillDto: CreateBillDto): Bill {
     const { title, description, amount, type } = createBillDto;
     const parseAmount = parseInt;
     const bill: Bill = {
@@ -49,16 +54,15 @@ export class BillsService {
     return bill;
   }
 
-  async deleteBill(id: string): Promise<void> {
-    this.bills = this.bills.filter((bill) => bill.id !== id);
+  deleteBill(id: string): void {
+    const found = this.getBillById(id);
+
+    this.bills = this.bills.filter((bill) => bill.id !== found.id);
   }
 
-  async updateBillById(
-    id: string,
-    updateBillDto: UpdateBillByIdDto,
-  ): Promise<Bill> {
+  updateBillById(id: string, updateBillDto: UpdateBillByIdDto): Bill {
     const { title, description, amount, type } = updateBillDto;
-    const bill: Bill = await this.getBillById(id);
+    const bill: Bill = this.getBillById(id);
     bill.title = title;
     bill.description = description;
     bill.amount = parseInt(amount);

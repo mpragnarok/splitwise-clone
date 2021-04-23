@@ -15,13 +15,14 @@ import { BillsService } from './bills.service';
 import { CreateBillDto } from './dto/create-bill.dto';
 import { GetBillsFilterDto } from './dto/get-bills-filter.dto';
 import { UpdateBillByIdDto } from './dto/update-bill-by-id.dtc';
+import { BillTypeValidationPipe } from './pipes/bill-type-validation.pipe';
 
 @Controller('bills')
 export class BillsController {
   constructor(private billsService: BillsService) {}
 
   @Get()
-  async getBills(@Query() filterDto: GetBillsFilterDto): Promise<Bill[]> {
+  getBills(@Query(ValidationPipe) filterDto: GetBillsFilterDto): Bill[] {
     if (Object.keys(filterDto).length) {
       return this.billsService.getBillsWithFilters(filterDto);
     }
@@ -29,26 +30,26 @@ export class BillsController {
   }
 
   @Get('/:id')
-  async getBillById(@Param('id') id: string): Promise<Bill> {
+  getBillById(@Param('id') id: string): Bill {
     return this.billsService.getBillById(id);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
-  async createBills(@Body() createBillDto: CreateBillDto): Promise<Bill> {
+  createBills(@Body() createBillDto: CreateBillDto): Bill {
     return this.billsService.createBill(createBillDto);
   }
 
   @Delete('/:id')
-  async deleteBill(@Param('id') id: string): Promise<void> {
+  deleteBill(@Param('id') id: string): void {
     this.billsService.deleteBill(id);
   }
 
   @Patch('/:id')
   updateBill(
     @Param('id') id: string,
-    @Body() updateBillDto: UpdateBillByIdDto,
-  ): Promise<Bill> {
+    @Body(BillTypeValidationPipe) updateBillDto: UpdateBillByIdDto,
+  ): Bill {
     return this.billsService.updateBillById(id, updateBillDto);
   }
 }
