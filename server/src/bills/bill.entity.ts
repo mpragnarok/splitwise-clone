@@ -1,17 +1,28 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { BillType } from './bill.model';
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { BillType } from './bill-type.enum';
 @Entity()
 export class Bill extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
   @Column()
   amount: number;
-  @Column()
-  date: Date;
+  @UpdateDateColumn()
+  updatedDate: Date;
+  @CreateDateColumn()
+  createdDate: Date;
   @Column()
   description: string;
-  @Column()
+  @Column({ default: false })
   paid: boolean;
   @Column()
   type: BillType;
+  @Column()
+  title: string;
 }

@@ -1,11 +1,12 @@
-import { BillType } from '../bill.model';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
+import { BillType } from '../bill-type.enum';
 export class CreateBillDto {
   @IsNotEmpty()
   title: string;
   @IsNotEmpty()
   description: string;
   @IsNotEmpty()
-  amount: string;
+  amount: number;
+  @IsOptional()
   type?: BillType;
 }

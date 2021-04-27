@@ -1,6 +1,5 @@
 import { IsOptional, IsIn, IsNotEmpty } from 'class-validator';
-import { BillType } from '../bill.model';
-
+import { BillType } from '../bill-type.enum';
 export class GetBillsFilterDto {
   @IsOptional()
   @IsIn([

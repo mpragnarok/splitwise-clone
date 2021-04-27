@@ -1,72 +1,51 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Bill, BillType } from './bill.model';
-import { v1 as uuid } from 'uuid';
 import { CreateBillDto } from './dto/create-bill.dto';
-import { UpdateBillByIdDto } from './dto/update-bill-by-id.dtc';
-import { async } from 'rxjs';
+import { UpdateBillDto } from './dto/update-bill.dtc';
 import { GetBillsFilterDto } from './dto/get-bills-filter.dto';
+import { BillRepository } from './bill.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Bill } from './bill.entity';
+import { BillType } from './bill-type.enum';
+import { DeleteResult } from 'typeorm';
 
 @Injectable()
 export class BillsService {
-  private bills: Bill[] = [];
+  constructor(
+    @InjectRepository(BillRepository)
+    private billRepository: BillRepository,
+  ) {}
 
-  getAllBills(): Bill[] {
-    return this.bills;
-  }
-  getBillsWithFilters(filterDto: GetBillsFilterDto): Bill[] {
-    const { type, search } = filterDto;
-    let bills: Bill[] = this.getAllBills();
-    if (type) {
-      bills = bills.filter((bill) => bill.type === type);
-    }
-
-    if (search) {
-      bills = bills.filter(
-        (bill) =>
-          bill.title.includes(search) || bill.description.includes(search),
-      );
-    }
-    return bills;
+  getBills(filterDto: GetBillsFilterDto): Promise<Bill[]> {
+    return this.billRepository.getBills(filterDto);
   }
 
-  getBillById(id: string): Bill {
-    const found = this.bills.find((bill) => bill.id === id);
-
+  async getBillById(id: number): Promise<Bill> {
+    const found = await this.billRepository.findOne(id);
     if (!found) {
       throw new NotFoundException(`Bill with ID ${id} not found`);
     }
     return found;
   }
-
-  createBill(createBillDto: CreateBillDto): Bill {
-    const { title, description, amount, type } = createBillDto;
-    const parseAmount = parseInt;
-    const bill: Bill = {
-      title,
-      description,
-      amount: parseInt(amount),
-      type: type ? BillType[type] : BillType.UNCATEGORIZED,
-      date: new Date(),
-      paid: false,
-      id: uuid(),
-    };
-    this.bills.push(bill);
-    return bill;
+  async createBill(createBillDto: CreateBillDto): Promise<Bill> {
+    return this.billRepository.createBill(createBillDto);
   }
 
-  deleteBill(id: string): void {
-    const found = this.getBillById(id);
-
-    this.bills = this.bills.filter((bill) => bill.id !== found.id);
+  async deleteBill(id: number): Promise<void> {
+    const result = await this.billRepository.delete(id);
+    console.log(result);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Bill with ID ${id} not found`);
+    }
   }
-
-  updateBillById(id: string, updateBillDto: UpdateBillByIdDto): Bill {
+  async updateBill(id: number, updateBillDto: UpdateBillDto): Promise<Bill> {
+    const bill = await this.getBillById(id);
     const { title, description, amount, type } = updateBillDto;
-    const bill: Bill = this.getBillById(id);
     bill.title = title;
     bill.description = description;
     bill.amount = parseInt(amount);
     bill.type = type;
+    await bill.save();
+
     return bill;
   }
 }

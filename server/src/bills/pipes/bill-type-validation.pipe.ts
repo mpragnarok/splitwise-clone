@@ -3,8 +3,7 @@ import {
   BadRequestException,
   PipeTransform,
 } from '@nestjs/common';
-import { BillType } from '../bill.model';
-
+import { BillType } from '../bill-type.enum';
 export class BillTypeValidationPipe implements PipeTransform {
   readonly allowedTypes = [
     BillType.ENTERTAINMENT,
