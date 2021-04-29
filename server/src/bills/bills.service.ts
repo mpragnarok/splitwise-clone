@@ -20,8 +20,8 @@ export class BillsService {
     return this.billRepository.getBills(filterDto, user);
   }
 
-  async getBillById(id: number): Promise<Bill> {
-    const found = await this.billRepository.findOne(id);
+  async getBillById(id: number, user: User): Promise<Bill> {
+    const found = await this.billRepository.findOne({ id, userId: user.id });
     if (!found) {
       throw new NotFoundException(`Bill with ID ${id} not found`);
     }
@@ -31,15 +31,19 @@ export class BillsService {
     return this.billRepository.createBill(createBillDto, user);
   }
 
-  async deleteBill(id: number): Promise<void> {
-    const result = await this.billRepository.delete(id);
+  async deleteBill(id: number, user: User): Promise<void> {
+    const result = await this.billRepository.delete({ id, userId: user.id });
     console.log(result);
     if (result.affected === 0) {
       throw new NotFoundException(`Bill with ID ${id} not found`);
     }
   }
-  async updateBill(id: number, updateBillDto: UpdateBillDto): Promise<Bill> {
-    const bill = await this.getBillById(id);
+  async updateBill(
+    id: number,
+    updateBillDto: UpdateBillDto,
+    user: User,
+  ): Promise<Bill> {
+    const bill = await this.getBillById(id, user);
     const { title, description, amount, type } = updateBillDto;
     bill.title = title;
     bill.description = description;

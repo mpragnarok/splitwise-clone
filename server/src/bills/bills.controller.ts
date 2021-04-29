@@ -36,8 +36,11 @@ export class BillsController {
   }
 
   @Get('/:id')
-  getBillById(@Param('id', ParseIntPipe) id: number): Promise<Bill> {
-    return this.billsService.getBillById(id);
+  getBillById(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
+  ): Promise<Bill> {
+    return this.billsService.getBillById(id, user);
   }
 
   @Post()
@@ -50,15 +53,19 @@ export class BillsController {
   }
 
   @Delete('/:id')
-  deleteBill(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.billsService.deleteBill(id);
+  deleteBill(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
+  ): Promise<void> {
+    return this.billsService.deleteBill(id, user);
   }
 
   @Patch('/:id')
   updateBill(
     @Param('id', ParseIntPipe) id: number,
     @Body(BillTypeValidationPipe) updateBillDto: UpdateBillDto,
+    @GetUser() user: User,
   ): Promise<Bill> {
-    return this.billsService.updateBill(id, updateBillDto);
+    return this.billsService.updateBill(id, updateBillDto, user);
   }
 }
