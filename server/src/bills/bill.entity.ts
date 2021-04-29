@@ -1,8 +1,10 @@
+import { User } from 'src/auth/user.entity';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -25,4 +27,6 @@ export class Bill extends BaseEntity {
   type: BillType;
   @Column()
   title: string;
+  @ManyToOne((type) => User, (user) => user.bills, { eager: false })
+  user: User;
 }

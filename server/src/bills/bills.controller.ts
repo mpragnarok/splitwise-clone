@@ -8,9 +8,11 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Bill } from './bill.entity';
 import { BillsService } from './bills.service';
 import { CreateBillDto } from './dto/create-bill.dto';
@@ -19,6 +21,7 @@ import { UpdateBillDto } from './dto/update-bill.dtc';
 import { BillTypeValidationPipe } from './pipes/bill-type-validation.pipe';
 
 @Controller('bills')
+@UseGuards(AuthGuard())
 export class BillsController {
   constructor(private billsService: BillsService) {}
 
