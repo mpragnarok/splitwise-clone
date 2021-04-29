@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   ParseIntPipe,
   Patch,
@@ -25,6 +26,7 @@ import { BillTypeValidationPipe } from './pipes/bill-type-validation.pipe';
 @Controller('bills')
 @UseGuards(AuthGuard())
 export class BillsController {
+  private logger = new Logger('BillsController');
   constructor(private billsService: BillsService) {}
 
   @Get()
@@ -32,6 +34,11 @@ export class BillsController {
     @Query(ValidationPipe) filterDto: GetBillsFilterDto,
     @GetUser() user: User,
   ) {
+    this.logger.verbose(
+      `User "${user.username}" retrieving all bills. Filters: ${JSON.stringify(
+        filterDto,
+      )}`,
+    );
     return this.billsService.getBills(filterDto, user);
   }
 
@@ -49,6 +56,11 @@ export class BillsController {
     @Body() createBillDto: CreateBillDto,
     @GetUser() user: User,
   ): Promise<Bill> {
+    this.logger.verbose(
+      `User "${user.username}" creating a new bill. Data: ${JSON.stringify(
+        createBillDto,
+      )}`,
+    );
     return this.billsService.createBill(createBillDto, user);
   }
 
