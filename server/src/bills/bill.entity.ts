@@ -29,4 +29,6 @@ export class Bill extends BaseEntity {
   title: string;
   @ManyToOne((type) => User, (user) => user.bills, { eager: false })
   user: User;
+  @Column()
+  userId: number;
 }

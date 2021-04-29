@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Bill } from './bill.entity';
 import { BillType } from './bill-type.enum';
 import { DeleteResult } from 'typeorm';
+import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class BillsService {
@@ -15,8 +16,8 @@ export class BillsService {
     private billRepository: BillRepository,
   ) {}
 
-  getBills(filterDto: GetBillsFilterDto): Promise<Bill[]> {
-    return this.billRepository.getBills(filterDto);
+  getBills(filterDto: GetBillsFilterDto, user: User): Promise<Bill[]> {
+    return this.billRepository.getBills(filterDto, user);
   }
 
   async getBillById(id: number): Promise<Bill> {
@@ -26,8 +27,8 @@ export class BillsService {
     }
     return found;
   }
-  async createBill(createBillDto: CreateBillDto): Promise<Bill> {
-    return this.billRepository.createBill(createBillDto);
+  async createBill(createBillDto: CreateBillDto, user: User): Promise<Bill> {
+    return this.billRepository.createBill(createBillDto, user);
   }
 
   async deleteBill(id: number): Promise<void> {

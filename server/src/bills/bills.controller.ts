@@ -13,6 +13,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/auth/user.entity';
 import { Bill } from './bill.entity';
 import { BillsService } from './bills.service';
 import { CreateBillDto } from './dto/create-bill.dto';
@@ -26,8 +28,11 @@ export class BillsController {
   constructor(private billsService: BillsService) {}
 
   @Get()
-  getBills(@Query(ValidationPipe) filterDto: GetBillsFilterDto) {
-    return this.billsService.getBills(filterDto);
+  getBills(
+    @Query(ValidationPipe) filterDto: GetBillsFilterDto,
+    @GetUser() user: User,
+  ) {
+    return this.billsService.getBills(filterDto, user);
   }
 
   @Get('/:id')
@@ -37,8 +42,11 @@ export class BillsController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  createBills(@Body() createBillDto: CreateBillDto): Promise<Bill> {
-    return this.billsService.createBill(createBillDto);
+  createBill(
+    @Body() createBillDto: CreateBillDto,
+    @GetUser() user: User,
+  ): Promise<Bill> {
+    return this.billsService.createBill(createBillDto, user);
   }
 
   @Delete('/:id')
