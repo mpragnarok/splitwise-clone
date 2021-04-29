@@ -1,10 +1,12 @@
 import { User } from 'src/auth/user.entity';
+import { Split } from 'src/splits/split.entity';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -31,4 +33,6 @@ export class Bill extends BaseEntity {
   user: User;
   @Column()
   userId: number;
+  // @OneToMany((type) => Split, (split) => split.bill, { eager: true })
+  // splits: Split[];
 }

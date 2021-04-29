@@ -9,6 +9,7 @@ import {
 
 import * as bcrypt from 'bcrypt';
 import { Bill } from 'src/bills/bill.entity';
+import { Split } from 'src/splits/split.entity';
 
 @Entity()
 @Unique(['email'])
@@ -30,6 +31,9 @@ export class User extends BaseEntity {
 
   @OneToMany((type) => Bill, (bill) => bill.user, { eager: true })
   bills: Bill[];
+
+  // @OneToMany((type) => Split, (split) => split.user, { eager: false })
+  // splits: Split[];
 
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);
