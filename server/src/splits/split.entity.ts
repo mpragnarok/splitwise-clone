@@ -5,6 +5,8 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -21,11 +23,11 @@ export class Split extends BaseEntity {
   billId: number;
   @Column()
   recipientId: number;
-  // @ManyToOne((type) => Bill, (bill) => bill.splits, { eager: false })
-  // @JoinColumn({ name: 'billId' })
-  // bill: Bill;
 
-  // @ManyToOne((type) => User, (user) => user.splits, { eager: false })
-  // @JoinColumn({ name: 'recipientId' })
-  // user: User;
+  @ManyToOne(() => User, (user) => user.splits)
+  @JoinColumn()
+  payer: User;
+  // @ManyToOne((type) => Bill, (bill) => bill.splits, { eager: false })
+  // // @JoinColumn({ name: 'billId' })
+  // bill: Bill;
 }

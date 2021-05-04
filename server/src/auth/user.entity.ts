@@ -2,6 +2,9 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   Unique,
@@ -29,11 +32,11 @@ export class User extends BaseEntity {
   @Column()
   salt: string;
 
-  @OneToMany((type) => Bill, (bill) => bill.user, { eager: true })
+  @OneToMany(() => Bill, (bill) => bill.user, { eager: true })
   bills: Bill[];
 
-  // @OneToMany((type) => Split, (split) => split.user, { eager: false })
-  // splits: Split[];
+  @OneToMany(() => Split, (split) => split.payer)
+  splits: Split[];
 
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);
