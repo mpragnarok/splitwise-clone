@@ -9,7 +9,7 @@ import { Split } from 'src/splits/split.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { BillType } from './bill-type.enum';
 import { Bill } from './bill.entity';
-import { GetBillByIdDto } from './dto/bill.dto';
+import { GetBillByIdDto, RemoveBillByIdDto } from './dto/bill.dto';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { GetBillsFilterDto } from './dto/get-bills-filter.dto';
 import { UpdateBillDto } from './dto/update-bill.dtc';
@@ -104,10 +104,6 @@ export class BillRepository extends Repository<Bill> {
     updateBillDto: UpdateBillDto,
     user: User,
   ) {
-    console.log(
-      '🚀 ~ file: bill.repository.ts ~ line 103 ~ BillRepository ~ getBillByIdDto',
-      getBillByIdDto,
-    );
     const bill = await this.getBillById({ id: getBillByIdDto.id }, user);
     if (!bill) return null;
     const { title, description, amount, type, splits } = updateBillDto;

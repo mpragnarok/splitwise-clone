@@ -23,6 +23,9 @@ export class Split extends BaseEntity {
   @ManyToOne(() => User, (user) => user.splits)
   @JoinColumn()
   payer: User;
-  @ManyToOne((type) => Bill, (bill) => bill.splits, { eager: false })
+  @ManyToOne((type) => Bill, (bill) => bill.splits, {
+    eager: false,
+    onDelete: 'CASCADE',
+  })
   bill: Bill;
 }

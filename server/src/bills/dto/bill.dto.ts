@@ -6,3 +6,4 @@ class GetBillBaseDto {
 }
 
 export class GetBillByIdDto extends GetBillBaseDto {}
+export class RemoveBillByIdDto extends GetBillBaseDto {}
