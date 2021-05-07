@@ -1,4 +1,5 @@
-import { IsOptional } from 'class-validator';
+import { IsArray, IsOptional } from 'class-validator';
+import { Split } from 'src/splits/split.entity';
 import { BillType } from '../bill-type.enum';
 export class UpdateBillDto {
   @IsOptional()
@@ -11,4 +12,7 @@ export class UpdateBillDto {
   type: BillType;
   @IsOptional()
   paid: boolean;
+  @IsOptional()
+  @IsArray()
+  splits: Split[];
 }

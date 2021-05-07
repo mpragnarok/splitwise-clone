@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   InternalServerErrorException,
   Logger,
   NotFoundException,
@@ -62,7 +63,10 @@ export class BillRepository extends Repository<Bill> {
     bill.amount = Number(amount);
     bill.type = type ?? BillType.UNCATEGORIZED;
     bill.user = user;
-    bill.splits = [split];
+    if (!bill.splits) {
+      bill.splits = [];
+      bill.splits.push(split);
+    }
 
     try {
       await bill.save();
@@ -100,13 +104,28 @@ export class BillRepository extends Repository<Bill> {
     updateBillDto: UpdateBillDto,
     user: User,
   ) {
+    console.log(
+      '🚀 ~ file: bill.repository.ts ~ line 103 ~ BillRepository ~ getBillByIdDto',
+      getBillByIdDto,
+    );
     const bill = await this.getBillById({ id: getBillByIdDto.id }, user);
-    const { title, description, amount, type } = updateBillDto;
+    if (!bill) return null;
+    const { title, description, amount, type, splits } = updateBillDto;
     bill.title = title;
     bill.description = description;
     bill.amount = parseInt(amount);
     bill.type = type;
-    await bill.save();
+    if (splits) {
+      bill.splits = updateBillDto.splits;
+    }
+
+    try {
+      await bill.save();
+    } catch (err) {
+      this.logger.error(err.message, '', 'UpdateBillRepoError');
+
+      throw new InternalServerErrorException(err.message);
+    }
     return bill;
   }
 }

@@ -34,7 +34,10 @@ export class Bill extends BaseEntity {
   user: User;
   @Column()
   userId: number;
-  @OneToMany((type) => Split, (split) => split.bill, { eager: true })
+  @OneToMany((type) => Split, (split) => split.bill, {
+    eager: true,
+    cascade: true,
+  })
   @JoinColumn()
   splits: Split[];
 }

@@ -12,7 +12,6 @@ export class SplitRepository extends Repository<Split> {
   async createSplit(
     createExpenseDto: CreateExpenseDto,
     payer: User,
-    // bill: Bill,
   ): Promise<Split> {
     const { splitAmount, splitType } = createExpenseDto;
     const split = new Split();
@@ -31,11 +30,6 @@ export class SplitRepository extends Repository<Split> {
       throw new InternalServerErrorException();
     }
     delete split.payer.token;
-    delete split.payer.bills;
     return split;
-  }
-
-  async updateSplit(splits: Split[]) {
-    const [split] = splits;
   }
 }

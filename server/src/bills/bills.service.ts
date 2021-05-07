@@ -39,7 +39,6 @@ export class BillsService {
     const split = await this.splitRepository.createSplit(
       createExpenseDto,
       payer,
-      // bill,
     );
     const bill = await this.billRepository.createBill(
       createExpenseDto,
@@ -68,7 +67,6 @@ export class BillsService {
       user,
     );
 
-    await this.splitRepository.updateSplit(bill.splits);
     return bill;
   }
 }

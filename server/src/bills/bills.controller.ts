@@ -75,10 +75,14 @@ export class BillsController {
 
   @Patch('/:id')
   updateBill(
-    @Param('id', ParseIntPipe) getBillByIdDto: GetBillByIdDto,
+    @Param('id', ParseIntPipe) id: number,
     @Body(BillTypeValidationPipe) updateBillDto: UpdateBillDto,
     @GetUser() user: User,
   ): Promise<Bill> {
-    return this.billsService.updateBill(getBillByIdDto, updateBillDto, user);
+    console.log(
+      '🚀 ~ file: bills.controller.ts ~ line 82 ~ BillsController ~ getBillByIdDto',
+      id,
+    );
+    return this.billsService.updateBill({ id }, updateBillDto, user);
   }
 }
