@@ -27,3 +27,7 @@ export class AuthCredentialsDto {
   @IsOptional()
   username: string;
 }
+export class GetUserDto {
+  @IsEmail()
+  email: string;
+}

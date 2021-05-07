@@ -42,6 +42,23 @@ export class User extends BaseEntity {
   @OneToMany(() => Split, (split) => split.payer, { eager: false })
   splits: Split[];
 
+  /**
+   * @description Friendships
+   */
+  @ManyToMany(() => User)
+  @JoinTable({
+    name: 'user_friends', // table name for the junction table of this relation
+    joinColumn: {
+      name: 'user',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'friend',
+      referencedColumnName: 'id',
+    },
+  })
+  friends: User[];
+
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);
 

@@ -5,8 +5,9 @@ import {
 } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { AuthCredentialsDto, GetUserDto } from './dto/auth-credentials.dto';
 import { User } from './user.entity';
+import { AddFriendDto } from './dto/friend.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -53,15 +54,16 @@ export class UserRepository extends Repository<User> {
   }
   /**
    * @description Get user by email
-   * @param {AuthCredentialsDto} GetBillByIdDto
+   * @param {GetUserDto} getUserDto
    */
-  async getUserByEmail(authCredentialsDto: AuthCredentialsDto): Promise<User> {
+  async getUserByEmail(getUserDto: GetUserDto): Promise<User> {
     const found = await this.findOne({
-      email: authCredentialsDto.email,
+      where: { email: getUserDto.email },
+      relations: ['friends'],
     });
     if (!found) {
       throw new NotFoundException(
-        `User with Emil ${authCredentialsDto.email} not found`,
+        `User with Emil ${getUserDto.email} not found`,
       );
     }
     return found;
@@ -77,11 +79,20 @@ export class UserRepository extends Repository<User> {
     } catch (err) {
       throw new InternalServerErrorException();
     }
+  }
 
-    console.log(
-      '🚀 ~ file: user.repository.ts ~ line 76 ~ UserRepository ~ user',
-      user,
-    );
+  async addFriend(addFriendDto: AddFriendDto, user: User): Promise<User> {
+    const found = await this.getUserByEmail(addFriendDto);
+    if (!user.friends) {
+      user.friends = [];
+    }
+    user.friends.push(found);
+    try {
+      await user.save();
+    } catch (err) {
+      throw new InternalServerErrorException();
+    }
+    return user;
   }
   private async hashPassword(password: string, salt: string): Promise<string> {
     return bcrypt.hash(password, salt);

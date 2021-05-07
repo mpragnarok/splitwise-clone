@@ -2,6 +2,8 @@ import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { AddFriendDto } from './dto/friend.dto';
+import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 
 @Injectable()
@@ -35,5 +37,9 @@ export class AuthService {
       `Generated JWT Token with payload ${JSON.stringify(payload)}`,
     );
     return { accessToken };
+  }
+
+  async addFriend(addFriendDto: AddFriendDto, user: User): Promise<User> {
+    return this.userRepository.addFriend(addFriendDto, user);
   }
 }
