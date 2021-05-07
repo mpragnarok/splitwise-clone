@@ -19,15 +19,10 @@ export class Split extends BaseEntity {
   splitAmount: number;
   @Column()
   splitType: SplitType;
-  @Column()
-  billId: number;
-  @Column()
-  recipientId: number;
 
   @ManyToOne(() => User, (user) => user.splits)
   @JoinColumn()
   payer: User;
-  // @ManyToOne((type) => Bill, (bill) => bill.splits, { eager: false })
-  // // @JoinColumn({ name: 'billId' })
-  // bill: Bill;
+  @ManyToOne((type) => Bill, (bill) => bill.splits, { eager: false })
+  bill: Bill;
 }

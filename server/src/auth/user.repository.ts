@@ -1,6 +1,7 @@
 import {
   ConflictException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -35,12 +36,52 @@ export class UserRepository extends Repository<User> {
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<string> {
     const { username, password, email } = authCredentialsDto;
-    const user = await this.findOne({ email });
-    if (user && (await user.validatePassword(password))) {
-      return user.username;
+
+    const query = this.createQueryBuilder('user');
+    query
+      .select('user.id', 'id')
+      .addSelect(['user', 'user.salt', 'user.password'])
+      .where('user.email = :email', { email });
+
+    const tUser = await query.getOne();
+
+    if (tUser && (await tUser.validatePassword(password))) {
+      return tUser.username;
     } else {
       return null;
     }
+  }
+  /**
+   * @description Get user by email
+   * @param {AuthCredentialsDto} GetBillByIdDto
+   */
+  async getUserByEmail(authCredentialsDto: AuthCredentialsDto): Promise<User> {
+    const found = await this.findOne({
+      email: authCredentialsDto.email,
+    });
+    if (!found) {
+      throw new NotFoundException(
+        `User with Emil ${authCredentialsDto.email} not found`,
+      );
+    }
+    return found;
+  }
+  async saveToken(
+    authCredentialsDto: AuthCredentialsDto,
+    token: string,
+  ): Promise<void> {
+    const user = await this.getUserByEmail(authCredentialsDto);
+    user.token = token;
+    try {
+      await user.save();
+    } catch (err) {
+      throw new InternalServerErrorException();
+    }
+
+    console.log(
+      '🚀 ~ file: user.repository.ts ~ line 76 ~ UserRepository ~ user',
+      user,
+    );
   }
   private async hashPassword(password: string, salt: string): Promise<string> {
     return bcrypt.hash(password, salt);

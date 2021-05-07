@@ -5,15 +5,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BillRepository } from 'src/bills/bill.repository';
 import { UserRepository } from 'src/auth/user.repository';
 import { AuthModule } from 'src/auth/auth.module';
-import { BillsModule } from 'src/bills/bills.module';
+import { SplitRepository } from './split.repository';
+import { BillsService } from 'src/bills/bills.service';
 
 @Module({
   imports: [
     AuthModule,
-    BillsModule,
-    TypeOrmModule.forFeature([BillRepository, UserRepository]),
+    TypeOrmModule.forFeature([BillRepository, UserRepository, SplitRepository]),
   ],
-  providers: [SplitsService],
+  providers: [SplitsService, BillsService],
   controllers: [SplitsController],
 })
 export class SplitsModule {}

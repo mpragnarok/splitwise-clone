@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -33,6 +34,7 @@ export class Bill extends BaseEntity {
   user: User;
   @Column()
   userId: number;
-  // @OneToMany((type) => Split, (split) => split.bill, { eager: true })
-  // splits: Split[];
+  @OneToMany((type) => Split, (split) => split.bill, { eager: true })
+  @JoinColumn()
+  splits: Split[];
 }

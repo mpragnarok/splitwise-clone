@@ -1,4 +1,7 @@
-import { Controller } from '@nestjs/common';
-
+import { Controller, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 @Controller('splits')
-export class SplitsController {}
+@UseGuards(AuthGuard())
+export class SplitsController {
+
+}

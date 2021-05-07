@@ -18,7 +18,8 @@ import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/auth/user.entity';
 import { Bill } from './bill.entity';
 import { BillsService } from './bills.service';
-import { CreateBillDto } from './dto/create-bill.dto';
+import { GetBillByIdDto } from './dto/bill.dto';
+import { CreateExpenseDto } from './dto/create-expense.dto';
 import { GetBillsFilterDto } from './dto/get-bills-filter.dto';
 import { UpdateBillDto } from './dto/update-bill.dtc';
 import { BillTypeValidationPipe } from './pipes/bill-type-validation.pipe';
@@ -53,15 +54,15 @@ export class BillsController {
   @Post()
   @UsePipes(ValidationPipe)
   createBill(
-    @Body() createBillDto: CreateBillDto,
+    @Body() createExpenseDto: CreateExpenseDto,
     @GetUser() user: User,
   ): Promise<Bill> {
     this.logger.verbose(
       `User "${user.username}" creating a new bill. Data: ${JSON.stringify(
-        createBillDto,
+        createExpenseDto,
       )}`,
     );
-    return this.billsService.createBill(createBillDto, user);
+    return this.billsService.createBill(createExpenseDto, user);
   }
 
   @Delete('/:id')
@@ -74,10 +75,10 @@ export class BillsController {
 
   @Patch('/:id')
   updateBill(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) getBillByIdDto: GetBillByIdDto,
     @Body(BillTypeValidationPipe) updateBillDto: UpdateBillDto,
     @GetUser() user: User,
   ): Promise<Bill> {
-    return this.billsService.updateBill(id, updateBillDto, user);
+    return this.billsService.updateBill(getBillByIdDto, updateBillDto, user);
   }
 }
